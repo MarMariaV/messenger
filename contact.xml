@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Contacts>
+	<client id = "123">Maria</client>
+	<contact id = "456">Liza</contact>
+	<contact id = "789">Lena</contact>
+</Contacts>
