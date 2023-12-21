@@ -1,3 +1,7 @@
+/*!
+	\file
+	\brief Заголовочный файл класса Главного окна
+*/
 #pragma once
 
 #include <QtWidgets/QMainWindow>
@@ -15,7 +19,11 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 public:
-	MainWindow(QWidget *parent = Q_NULLPTR);
+	/*!
+		Конструктор с параметром
+		\param[in] parent Указатель на родителя
+	*/
+	explicit MainWindow(QWidget *parent = Q_NULLPTR);
 	~MainWindow();
 
 private:
@@ -37,17 +45,45 @@ private:
 
 	QButtonGroup* bgContacts;
 
+	//! Чтение списка контактов из xml
 	void readAddressBook();
+	//! Создание локального хранилища контактов и соответствующих элементов интерфейса
 	void createContacts();
 
 private slots:
+	//! Слот окончания ввода сообщения для отправки на сервер
 	void textFinished();
+	//! Слот изменения текста для сообщения: печатаю
 	void textChanged();
-	void slotIsConnected(bool bState);
+	/*!
+		Слот отображения состояния соединения с сервером
+		\param[in] bState состояние соединения
+	*/
+	void slotIsConnected(bool bState);	
+	/*!
+		Слот отображения состояния соединения с контактом
+		\param[in] bState состояние соединения
+		\param[in] toID ID контакта
+	*/
 	void slotContactIsConnected(bool bState, quint16 id);
+	/*!
+		Слот отображения сообщения, что пользователь печатает
+		\param[in] toID ID контакта
+	*/
 	void slotContactIsTyping(quint16 id);
+	//! Слот Timeout таймера для отображения сообщения, что контакт печатает
 	void slotTimeoutIn();
+	//! Слот Timeout таймера для отправки сообщения, что пользователь печатает
 	void slotTimeoutOut();
-	void slotSetMessage(QString str, quint16 fromID);
-	void setChoseContact(int);
+	/*!
+		Слот подготовки сообщения для отправки на сервер
+		\param[in] str Строка сообщения
+		\param[in] toID ID адресата
+	*/
+	void slotSetMessage(QString str, quint16 fromID);	
+	/*!
+		Слот выбора контакта
+		\param[in] toID ID адресата
+	*/
+	void setChoseContact(quint16);
 };

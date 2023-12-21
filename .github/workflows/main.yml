@@ -20,3 +20,11 @@ jobs:
       - name: Build Messenger
         shell: pwsh
         run: scripts/build.ps1
+        
+      - name: Doxygen Action
+        uses: mattnotmitt/doxygen-action@v1.1.0
+        with:
+        # Path to Doxyfile
+        doxyfile-path: "./Doxyfile" # default is ./Doxyfile
+        # Working directory
+        working-directory: "." # default is .

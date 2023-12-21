@@ -79,7 +79,7 @@ void MainWindow::createContacts()
 	ui.labelName->setText(m_name);
 }
 
-void MainWindow::setChoseContact(int id)
+void MainWindow::setChoseContact(quint16 id)
 {
 	m_toID = id;
 	m_currentModel = modelMap[m_toID];

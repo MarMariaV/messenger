@@ -1,3 +1,8 @@
+/*!
+	\file
+	\brief Файл реализации класса Кастомного TextEdit
+*/
+
 #include "mytextedit.h"
 #include <QKeyEvent>
 

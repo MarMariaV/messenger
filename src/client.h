@@ -1,6 +1,18 @@
+﻿/*!
+	\file
+	\brief Заголовочный файл класса TCP клиента
+*/
+
 #pragma once
 #include <QObject>
 #include <QMap>
+
+/*!
+	\brief Класс TCP клиента
+
+	Client предоставляет возможность принять сообщения от сервера,
+	отправить сообщения на сервер
+*/
 
 class QTcpSocket;
 class QTimer;
@@ -10,6 +22,11 @@ class Client: public QObject
 	Q_OBJECT
 
 public:
+	/*!
+		Конструктор с параметром
+		\param[in] parent Указатель на родителя
+		\param[in] fromID ID адресанта
+	*/
 	Client(QObject *parent, quint16 fromID);
 	~Client();
 
@@ -19,8 +36,6 @@ public:
 		eDisconnected,
 		eTyping,
 	};
-
-
 
 private:
 	QTcpSocket*	m_socket;
@@ -33,14 +48,30 @@ private:
 	quint16		m_typingId;
 
 public slots:
+	/*!
+		Слот отправки сообщения на сервер
+		\param[in] str Строка сообщения
+		\param[in] toID ID адресата
+		\param[in] code Тип отправляемого сообщения
+	*/
 	Q_INVOKABLE void slotSendToServer(QString str, quint16 toID, quint16 code);
+	/*!
+		Слот сообщения о том, что пользователь печатает
+		\param[in] toID ID адресата
+		\param[in] isTexting флаг того, что пользователь печатает
+	*/
 	Q_INVOKABLE void slotIsTyping(quint16 toID, bool isTexting);
+	//! Слот инициализации Client
 	Q_INVOKABLE void start();
 
 private slots:
+	//! Слот готовности чтения сообщения от сервера
 	void slotReadyRead();
+	//! Слот соединения с сервером
 	void slotConnected();
+	//! Слот рассоединения с сервером
 	void slotDisconnected();
+	//! Слот Timeout таймера для повторного подключения к серверу
 	void slotTimeout();
 //	void slotError(QAbstractSocket::SocketError);
 

@@ -1,3 +1,8 @@
+﻿/*!
+	\file
+	\brief Файл реализации класса TCP клиента
+*/
+
 #include "client.h"
 #include <QTcpSocket>
 #include <QTime>
@@ -77,7 +82,7 @@ void Client::slotReadyRead()
 		switch (code)
 		{
 		case eMessage: {
-			QString strMessage = time.toString() + str;
+			QString strMessage = str;
 			emit setMessage(strMessage, fromID);
 			break;
 		}
@@ -116,7 +121,7 @@ void Client::slotSendToServer(QString str, quint16 toID, quint16 code)
 
 void Client::slotConnected()
 {
-	slotSendToServer("", 0, 0);
+	slotSendToServer("", 0, eMessage);
 	emit isConnected(true);
 }
 
