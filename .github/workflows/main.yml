@@ -18,5 +18,4 @@ jobs:
           version:  '5.15.2'
 
       - name: Build Messenger
-        shell: pwsh
-        run: scripts/build.ps1
+        run: make
