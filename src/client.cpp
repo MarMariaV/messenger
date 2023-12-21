@@ -11,13 +11,14 @@ Client::Client(QObject *parent, quint16 fromID)
 	m_port = 1111;
 	m_blockSize = 0;
 	m_fromID = fromID;
+	m_isTyping = false;
 }
+
 
 void Client::start()
 {
 	m_socket = new QTcpSocket(this);
 	m_timer = new QTimer(this);
-	//m_socket->connectToHost(m_HostIP, m_port);
 
 	connect(m_socket, &QTcpSocket::connected, this, &Client::slotConnected);
 	connect(m_socket, &QTcpSocket::disconnected, this, &Client::slotDisconnected);
@@ -40,8 +41,16 @@ void Client::slotTimeout()
 		m_socket->connectToHost(m_HostIP, m_port);
 	}
 	else if (m_socket->state() == QTcpSocket::ConnectedState) {
-		
+		if (m_isTyping) {
+			slotSendToServer("", m_typingId, eTyping);
+		}
 	}
+}
+
+void Client::slotIsTyping(quint16 toID, bool isTexting)
+{
+	m_isTyping = isTexting;
+	m_typingId = toID;
 }
 
 void Client::slotReadyRead()
@@ -77,6 +86,9 @@ void Client::slotReadyRead()
 			break;
 		case eDisconnected:
 			emit contactIsConnected(false, fromID);
+			break;
+		case eTyping:
+			emit contactIsTyping(fromID);
 			break;
 		default:
 			break;

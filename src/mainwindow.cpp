@@ -15,6 +15,7 @@
 #include <QButtonGroup>
 #include <QSpacerItem>
 #include <QMetaObject>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent), m_toID(0), m_fromID(0)
@@ -34,13 +35,22 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(m_client, &Client::isConnected, this, &MainWindow::slotIsConnected);
 	connect(m_client, &Client::setMessage, this, &MainWindow::slotSetMessage);
 	connect(m_client, &Client::contactIsConnected, this, &MainWindow::slotContactIsConnected);
+	connect(m_client, &Client::contactIsTyping, this, &MainWindow::slotContactIsTyping);
 
 	m_textEdit = new MyTextEdit(this);
 	ui.layoutWrite->addWidget(m_textEdit, 0, 0);
 	connect(m_textEdit, &MyTextEdit::textFinished, this, &MainWindow::textFinished);
+	connect(m_textEdit, &MyTextEdit::textChanged, this, &MainWindow::textChanged);
 
 	ui.listView->setItemDelegate(new CustomItemDelegate(ui.listView));
 	ui.layoutRead->addWidget(ui.listView);
+
+	ui.labelIsTyping->hide();
+
+	m_timerIn = new QTimer(this);
+	connect(m_timerIn, &QTimer::timeout, this, &MainWindow::slotTimeoutIn);
+	m_timerOut = new QTimer(this);
+	connect(m_timerOut, &QTimer::timeout, this, &MainWindow::slotTimeoutOut);
 }
 
 MainWindow::~MainWindow()
@@ -117,6 +127,20 @@ void MainWindow::readAddressBook()
 	file.close();
 }
 
+void MainWindow::textChanged()
+{
+	if (m_textEdit->toPlainText() != "") {
+		m_timerOut->start(1000);
+		QMetaObject::invokeMethod(m_client, "slotSendToServer", Qt::AutoConnection,
+			Q_ARG(QString, ""),
+			Q_ARG(quint16, m_toID),
+			Q_ARG(quint16, Client::eTyping));
+	}
+	else {
+		m_timerOut->stop();
+	}
+}
+
 void MainWindow::textFinished()
 {
 	m_currentModel->insertRow(m_currentModel->rowCount(), new QStandardItem());
@@ -141,6 +165,28 @@ void MainWindow::slotContactIsConnected(bool bState, quint16 id)
 	}
 }
 
+void MainWindow::slotContactIsTyping(quint16 id)
+{
+	if (m_toID == id) {
+		m_timerIn->start(1000);
+		ui.labelIsTyping->show();
+	}
+}
+
+void MainWindow::slotTimeoutIn()
+{
+	ui.labelIsTyping->hide();
+	m_timerIn->stop();
+}
+
+void MainWindow::slotTimeoutOut()
+{
+	QMetaObject::invokeMethod(m_client, "slotSendToServer", Qt::AutoConnection,
+		Q_ARG(QString, ""),
+		Q_ARG(quint16, m_toID),
+		Q_ARG(quint16, Client::eTyping));
+}
+
 void MainWindow::slotIsConnected(bool bState)
 {
 	if (bState)
@@ -149,7 +195,7 @@ void MainWindow::slotIsConnected(bool bState)
 		ui.pbServer->setStyleSheet("QPushButton {background-color : white }");
 }
 
-void MainWindow::slotSetMessage(QString str, int fromID)
+void MainWindow::slotSetMessage(QString str, quint16 fromID)
 {
 	if (modelMap[fromID] != nullptr) {
 		modelMap[fromID]->insertRow(modelMap[fromID]->rowCount(), new QStandardItem());

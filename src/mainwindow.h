@@ -8,6 +8,7 @@
 class QStandardItemModel;
 class MyTextEdit;
 class Client;
+class QTimer;
 
 class MainWindow : public QMainWindow
 {
@@ -28,6 +29,8 @@ private:
 	quint16 m_fromID;
 	quint16 m_toID;
 	QString m_name;
+	QTimer*	m_timerIn;
+	QTimer*	m_timerOut;
 
 	QMap<int, QString> contactMap;
 	QMap<int, QStandardItemModel*> modelMap;
@@ -37,12 +40,14 @@ private:
 	void readAddressBook();
 	void createContacts();
 
-public slots:
-	void slotIsConnected(bool bState);
-
 private slots:
 	void textFinished();
+	void textChanged();
+	void slotIsConnected(bool bState);
 	void slotContactIsConnected(bool bState, quint16 id);
-	void slotSetMessage(QString str, int fromID);
+	void slotContactIsTyping(quint16 id);
+	void slotTimeoutIn();
+	void slotTimeoutOut();
+	void slotSetMessage(QString str, quint16 fromID);
 	void setChoseContact(int);
 };

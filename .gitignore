@@ -3,7 +3,10 @@ messenger.vcxproj
 messenger.vcxproj.filters
 messenger.vcxproj.user
 Resources/contact.xml
-*.obj
+x64/Debug/client.obj
+x64/Debug/customitemdelegate.obj
+x64/Debug/main.obj
+x64/Debug/mainwindow.obj
 x64/Debug/messenger.Build.CppClean.log
 x64/Debug/messenger.log
 x64/Debug/messenger.tlog/CL.command.1.tlog
@@ -18,9 +21,11 @@ x64/Debug/messenger.tlog/link.17640.delete.1.tlog
 x64/Debug/messenger.tlog/link.17904.delete.1.tlog
 x64/Debug/messenger.tlog/link.18316.delete.1.tlog
 x64/Debug/messenger.tlog/link.20040.delete.1.tlog
+x64/Debug/messenger.tlog/link.20884.delete.1.tlog
 x64/Debug/messenger.tlog/link.20892.delete.1.tlog
 x64/Debug/messenger.tlog/link.21184.delete.1.tlog
 x64/Debug/messenger.tlog/link.21276.delete.1.tlog
+x64/Debug/messenger.tlog/link.21736.delete.1.tlog
 x64/Debug/messenger.tlog/link.22736.delete.1.tlog
 x64/Debug/messenger.tlog/link.22896.delete.1.tlog
 x64/Debug/messenger.tlog/link.24040.delete.1.tlog
@@ -38,6 +43,7 @@ x64/Debug/messenger.tlog/link.660.delete.1.tlog
 x64/Debug/messenger.tlog/link.6840.delete.1.tlog
 x64/Debug/messenger.tlog/link.7344.delete.1.tlog
 x64/Debug/messenger.tlog/link.8208.delete.1.tlog
+x64/Debug/messenger.tlog/link.8988.delete.1.tlog
 x64/Debug/messenger.tlog/link.9160.delete.1.tlog
 x64/Debug/messenger.tlog/link.command.1.tlog
 x64/Debug/messenger.tlog/link.delete.1.tlog
@@ -55,8 +61,12 @@ x64/Debug/moc/moc_client.cpp
 x64/Debug/moc/moc_mainwindow.cpp
 x64/Debug/moc/moc_mytextedit.cpp
 x64/Debug/moc_client.asm
+x64/Debug/moc_client.obj
 x64/Debug/moc_mainwindow.asm
+x64/Debug/moc_mainwindow.obj
 x64/Debug/moc_mytextedit.asm
+x64/Debug/moc_mytextedit.obj
+x64/Debug/mytextedit.obj
 x64/Debug/qmake/qtvars_x64_Debug.props
 x64/Debug/qmake/temp/.qmake.stash
 x64/Debug/qmake/temp/moc_predefs.h.cbt
@@ -67,6 +77,7 @@ x64/Debug/qmake/temp/qtvars.vcxproj
 x64/Debug/qmake/temp/qtvars.vcxproj.filters
 x64/Debug/qmake/temp/qtvars_x64_Debug.props
 x64/Debug/qrc_mainwindow.asm
+x64/Debug/qrc_mainwindow.obj
 x64/Debug/qt.natvis
 x64/Debug/qt_work.log
 x64/Debug/qtvars_ryoc3si1.4fl.designtime.props
@@ -75,6 +86,9 @@ x64/Debug/qtvars_x64_Debug.props
 x64/Debug/rcc/qrc_mainwindow.cpp
 x64/Debug/uic/ui_mainwindow.h
 x64/Debug/vc141.pdb
+x64/Release/client.obj
+x64/Release/main.obj
+x64/Release/mainwindow.obj
 x64/Release/messenger.log
 x64/Release/messenger.tlog/CL.11744.write.1.tlog
 x64/Release/messenger.tlog/CL.command.1.tlog
@@ -87,6 +101,10 @@ x64/Release/messenger.tlog/messenger.write.1u.tlog
 x64/Release/moc/moc_client.cpp
 x64/Release/moc/moc_mainwindow.cpp
 x64/Release/moc/moc_mytextedit.cpp
+x64/Release/moc_client.obj
+x64/Release/moc_mainwindow.obj
+x64/Release/moc_mytextedit.obj
+x64/Release/mytextedit.obj
 x64/Release/qmake/qtvars_x64_Release.props
 x64/Release/qmake/temp/.qmake.stash
 x64/Release/qmake/temp/B12702AD-ABFB-343A-A199-8E24837244A3.messenger.designtime.idx
@@ -97,6 +115,7 @@ x64/Release/qmake/temp/qtvars.pro
 x64/Release/qmake/temp/qtvars.vcxproj
 x64/Release/qmake/temp/qtvars.vcxproj.filters
 x64/Release/qmake/temp/qtvars_x64_Release.props
+x64/Release/qrc_mainwindow.obj
 x64/Release/qtvars_x64_Release.designtime.idx
 x64/Release/qtvars_x64_Release.props
 x64/Release/qtvars_zqmaizef.t4k.designtime.props

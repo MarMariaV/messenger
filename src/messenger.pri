@@ -7,14 +7,14 @@
 message("You are running qmake on a generated .pro file. This may not work!")
 
 
-HEADERS += ./customitemdelegate.h \
-    ./mainwindow.h \
-    ./mytextedit.h \
-    ./client.h
+HEADERS += src/customitemdelegate.h \
+    src/client.h \
+    src/mytextedit.h \
+    src/mainwindow.h
 SOURCES += ./client.cpp \
-    ./customitemdelegate.cpp \
-    ./main.cpp \
-    ./mainwindow.cpp \
-    ./mytextedit.cpp
-FORMS += ./mainwindow.ui
-RESOURCES += mainwindow.qrc
+    src/customitemdelegate.cpp \
+    src/main.cpp \
+    src/mainwindow.cpp \
+    src/mytextedit.cpp
+FORMS += src/mainwindow.ui
+RESOURCES += Resources/mainwindow.qrc

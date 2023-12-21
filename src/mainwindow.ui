@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>532</width>
+    <width>533</width>
     <height>626</height>
    </rect>
   </property>
@@ -117,6 +117,13 @@
        <item row="0" column="0">
         <widget class="QListView" name="listView"/>
        </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="labelIsTyping">
+         <property name="text">
+          <string>typing...</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -138,7 +145,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>532</width>
+     <width>533</width>
      <height>26</height>
     </rect>
    </property>
