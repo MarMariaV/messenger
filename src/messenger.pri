@@ -11,7 +11,7 @@ HEADERS += src/customitemdelegate.h \
     src/client.h \
     src/mytextedit.h \
     src/mainwindow.h
-SOURCES += ./client.cpp \
+SOURCES += src/client.cpp \
     src/customitemdelegate.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
