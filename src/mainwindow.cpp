@@ -223,6 +223,6 @@ void MainWindow::slotSetMessage(QString str, quint16 fromID)
 		m_currentModel->setData(index, Qt::AlignRight, Qt::TextAlignmentRole);
 
 		QMetaObject::invokeMethod(m_logWriter, "slotWrite", Qt::AutoConnection,
-			Q_ARG(QString, m_textEdit->toPlainText()));
+			Q_ARG(QString, str));
 	}
 }

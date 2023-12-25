@@ -65,15 +65,14 @@ void Client::slotReadyRead()
 	in.setVersion(QDataStream::Qt_DefaultCompiledVersion);
 	while (!in.atEnd())
 	{
-
 		QTime time;
 		quint16 fromID, code;
 		in >> time >> fromID >> code;
+		QString strMessage;
 
 		switch (code)
 		{
 		case eMessage: {
-			QString strMessage;
 			in >> strMessage;
 			emit setMessage(strMessage, fromID);
 			break;
@@ -83,12 +82,15 @@ void Client::slotReadyRead()
 			break;
 		}
 		case eConnected:
+			in >> strMessage;
 			emit contactIsConnected(true, fromID);
 			break;
 		case eDisconnected:
+			in >> strMessage;
 			emit contactIsConnected(false, fromID);
 			break;
 		case eTyping:
+			in >> strMessage;
 			emit contactIsTyping(fromID);
 			break;
 		default:
