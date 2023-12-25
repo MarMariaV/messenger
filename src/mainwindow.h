@@ -11,6 +11,7 @@
 
 class QStandardItemModel;
 class MyTextEdit;
+class LogWriter;
 class Client;
 class QTimer;
 
@@ -30,7 +31,9 @@ private:
 	QStandardItemModel* m_currentModel;
 	MyTextEdit* m_textEdit;
 	QThread* m_netThread;
+	QThread* m_logThread;
 	Client* m_client;
+	LogWriter* m_logWriter;
 
 	Ui::MainWindowClass ui;
 

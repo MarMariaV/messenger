@@ -2,6 +2,7 @@
 #include "mytextedit.h"
 #include "customitemdelegate.h"
 #include "client.h"
+#include "logwriter.h"
 
 #include <QStandardItemModel>
 #include <QListView>
@@ -38,6 +39,11 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(m_client, &Client::contactIsConnected, this, &MainWindow::slotContactIsConnected);
 	connect(m_client, &Client::contactIsTyping, this, &MainWindow::slotContactIsTyping);
 
+	m_logThread = new QThread(this);
+	m_logWriter = new LogWriter(this);
+	m_logWriter->moveToThread(m_logThread);
+	m_logThread->start();
+
 	m_textEdit = new MyTextEdit(this);
 	ui.layoutWrite->addWidget(m_textEdit, 0, 0);
 	connect(m_textEdit, &MyTextEdit::textFinished, this, &MainWindow::textFinished);
@@ -52,15 +58,18 @@ MainWindow::MainWindow(QWidget *parent)
 
 	m_timerIn = new QTimer(this);
 	connect(m_timerIn, &QTimer::timeout, this, &MainWindow::slotTimeoutIn);
+
+	connect(m_netThread, &QThread::finished, m_client, &QObject::deleteLater);
+	connect(m_logThread, &QThread::finished, m_logWriter, &QObject::deleteLater);
 }
 
 MainWindow::~MainWindow()
 {
-	// почитать, как нужно делать (m_client не удаляется)
 	m_netThread->quit();
+	m_logThread->quit();
 	m_netThread->wait();
+	m_logThread->wait();
 }
-
 
 void MainWindow::sendFile()
 {
@@ -167,6 +176,8 @@ void MainWindow::textFinished()
 		Q_ARG(QString, m_textEdit->toPlainText()),
 		Q_ARG(quint16, m_toID),
 		Q_ARG(quint16, Client::eMessage)); //code не нужно?
+	QMetaObject::invokeMethod(m_logWriter, "slotWrite", Qt::AutoConnection,
+		Q_ARG(QString, m_textEdit->toPlainText()));
 	m_textEdit->clear();
 }
 
@@ -210,5 +221,8 @@ void MainWindow::slotSetMessage(QString str, quint16 fromID)
 		modelMap[fromID]->setData(index, str, Qt::EditRole);
 		m_currentModel->setData(index, QColor(199, 183, 217), Qt::BackgroundRole);
 		m_currentModel->setData(index, Qt::AlignRight, Qt::TextAlignmentRole);
+
+		QMetaObject::invokeMethod(m_logWriter, "slotWrite", Qt::AutoConnection,
+			Q_ARG(QString, m_textEdit->toPlainText()));
 	}
 }
