@@ -38,7 +38,6 @@ private:
 	quint16 m_toID;
 	QString m_name;
 	QTimer*	m_timerIn;
-	QTimer*	m_timerOut;
 
 	QMap<int, QString> contactMap;
 	QMap<int, QStandardItemModel*> modelMap;
@@ -73,8 +72,7 @@ private slots:
 	void slotContactIsTyping(quint16 id);
 	//! Слот Timeout таймера для отображения сообщения, что контакт печатает
 	void slotTimeoutIn();
-	//! Слот Timeout таймера для отправки сообщения, что пользователь печатает
-	void slotTimeoutOut();
+
 	/*!
 		Слот подготовки сообщения для отправки на сервер
 		\param[in] str Строка сообщения
@@ -86,4 +84,6 @@ private slots:
 		\param[in] toID ID адресата
 	*/
 	void setChoseContact(quint16);
+
+	void sendFile();
 };

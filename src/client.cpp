@@ -8,13 +8,14 @@
 #include <QTime>
 #include <QDataStream>
 #include <QTimer>
+#include <QFile>
+#include <QFileInfo>
 
 
 Client::Client(QObject *parent, quint16 fromID)
 {
 	m_HostIP = "localhost";
 	m_port = 1111;
-	m_blockSize = 0;
 	m_fromID = fromID;
 	m_isTyping = false;
 }
@@ -61,29 +62,24 @@ void Client::slotIsTyping(quint16 toID, bool isTexting)
 void Client::slotReadyRead()
 {
 	QDataStream in(m_socket);
-	in.setVersion(QDataStream::Qt_5_3);
-	for (;;) {
-		if (!m_blockSize) {
-			if (m_socket->bytesAvailable() < sizeof(quint16)) {
-				break;
-			}
-			in >> m_blockSize;
-		}
-
-		if (m_socket->bytesAvailable() < m_blockSize) {
-			break;
-		}
+	in.setVersion(QDataStream::Qt_DefaultCompiledVersion);
+	while (!in.atEnd())
+	{
 
 		QTime time;
-		QString str;
 		quint16 fromID, code;
-		in >> time >> fromID >> code >> str;
+		in >> time >> fromID >> code;
 
 		switch (code)
 		{
 		case eMessage: {
-			QString strMessage = str;
+			QString strMessage;
+			in >> strMessage;
 			emit setMessage(strMessage, fromID);
+			break;
+		}
+		case eFile: {
+
 			break;
 		}
 		case eConnected:
@@ -98,8 +94,6 @@ void Client::slotReadyRead()
 		default:
 			break;
 		}
-
-		m_blockSize = 0;
 	}
 }
 
@@ -110,14 +104,44 @@ void Client::slotReadyRead()
 
 void Client::slotSendToServer(QString str, quint16 toID, quint16 code)
 {
-	QByteArray arrBlock;
-	QDataStream out(&arrBlock, QIODevice::WriteOnly);
-	out.setVersion(QDataStream::Qt_5_2);
-	out << quint16(0) << QTime::currentTime() << m_fromID << toID << code << str;
-	out.device()->seek(0);
-	out << quint16(arrBlock.size() - sizeof(quint16));
-	m_socket->write(arrBlock);
+	QDataStream stream(m_socket);
+	stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
+	stream << QTime::currentTime() << m_fromID << toID << code << str;
+	m_socket->waitForBytesWritten();
 }
+
+void Client::socketSendFile(quint16 toID, QString path)
+{
+	QDataStream stream(m_socket);
+	stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
+
+	QFile file(path);
+	auto strList = path.split("/");
+	m_fileName = strList.last();
+
+	m_sendFile = new QFile(path);
+	if (m_sendFile->open(QFile::ReadOnly)) {
+		connect(m_socket, &QTcpSocket::bytesWritten, this, &Client::sendPartOfFile);
+		sendPartOfFile();
+	}
+}
+
+void Client::sendPartOfFile()
+{
+	QDataStream stream(m_socket);
+	stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
+
+	if (!m_sendFile->atEnd()) {
+		QByteArray data = m_sendFile->read(1024 * 250);
+		stream << QTime::currentTime() << m_fromID << m_fromID << quint16(eFile) << m_fileName << quint16(data.size()) << data;
+		m_socket->waitForBytesWritten();
+	}
+	else {
+		m_sendFile->close();
+		disconnect(m_socket, &QTcpSocket::bytesWritten, this, &Client::sendPartOfFile);
+	}
+}
+
 
 void Client::slotConnected()
 {

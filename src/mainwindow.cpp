@@ -16,6 +16,7 @@
 #include <QSpacerItem>
 #include <QMetaObject>
 #include <QTimer>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent), m_toID(0), m_fromID(0)
@@ -47,10 +48,10 @@ MainWindow::MainWindow(QWidget *parent)
 
 	ui.labelIsTyping->hide();
 
+	connect(ui.buttonFile, &QPushButton::clicked, this, &MainWindow::sendFile);
+
 	m_timerIn = new QTimer(this);
 	connect(m_timerIn, &QTimer::timeout, this, &MainWindow::slotTimeoutIn);
-	m_timerOut = new QTimer(this);
-	connect(m_timerOut, &QTimer::timeout, this, &MainWindow::slotTimeoutOut);
 }
 
 MainWindow::~MainWindow()
@@ -58,6 +59,20 @@ MainWindow::~MainWindow()
 	// почитать, как нужно делать (m_client не удаляется)
 	m_netThread->quit();
 	m_netThread->wait();
+}
+
+
+void MainWindow::sendFile()
+{
+	QString path = QFileDialog::getOpenFileName(0, "File Name", QDir::currentPath());
+	QMetaObject::invokeMethod(m_client, "socketSendFile", Qt::AutoConnection,
+		Q_ARG(quint16, m_fromID),
+		Q_ARG(QString, path));
+	m_currentModel->insertRow(m_currentModel->rowCount(), new QStandardItem());
+	QModelIndex index = m_currentModel->index(m_currentModel->rowCount() - 1, 0);
+	m_currentModel->setData(index, "Send file: " + path, Qt::EditRole);
+	m_currentModel->setData(index, QColor(166, 221, 202), Qt::BackgroundRole);
+	m_currentModel->setData(index, Qt::AlignLeft, Qt::TextAlignmentRole);
 }
 
 void MainWindow::createContacts()
@@ -130,14 +145,14 @@ void MainWindow::readAddressBook()
 void MainWindow::textChanged()
 {
 	if (m_textEdit->toPlainText() != "") {
-		m_timerOut->start(1000);
-		QMetaObject::invokeMethod(m_client, "slotSendToServer", Qt::AutoConnection,
-			Q_ARG(QString, ""),
+		QMetaObject::invokeMethod(m_client, "slotIsTyping", Qt::AutoConnection,
 			Q_ARG(quint16, m_toID),
-			Q_ARG(quint16, Client::eTyping));
+			Q_ARG(bool, true));
 	}
 	else {
-		m_timerOut->stop();
+		QMetaObject::invokeMethod(m_client, "slotIsTyping", Qt::AutoConnection,
+			Q_ARG(quint16, m_toID),
+			Q_ARG(bool, false));
 	}
 }
 
@@ -151,7 +166,7 @@ void MainWindow::textFinished()
 	QMetaObject::invokeMethod(m_client, "slotSendToServer", Qt::AutoConnection,
 		Q_ARG(QString, m_textEdit->toPlainText()),
 		Q_ARG(quint16, m_toID),
-		Q_ARG(quint16, 0));
+		Q_ARG(quint16, Client::eMessage)); //code не нужно?
 	m_textEdit->clear();
 }
 
@@ -177,14 +192,6 @@ void MainWindow::slotTimeoutIn()
 {
 	ui.labelIsTyping->hide();
 	m_timerIn->stop();
-}
-
-void MainWindow::slotTimeoutOut()
-{
-	QMetaObject::invokeMethod(m_client, "slotSendToServer", Qt::AutoConnection,
-		Q_ARG(QString, ""),
-		Q_ARG(quint16, m_toID),
-		Q_ARG(quint16, Client::eTyping));
 }
 
 void MainWindow::slotIsConnected(bool bState)

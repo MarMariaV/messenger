@@ -16,6 +16,7 @@
 
 class QTcpSocket;
 class QTimer;
+class QFile;
 
 class Client: public QObject
 {
@@ -31,7 +32,9 @@ public:
 	~Client();
 
 	enum eCodes {
+		eNo,
 		eMessage,
+		eFile,
 		eConnected,
 		eDisconnected,
 		eTyping,
@@ -39,13 +42,14 @@ public:
 
 private:
 	QTcpSocket*	m_socket;
-	quint16		m_blockSize;
 	QString		m_HostIP;
 	quint16		m_port;
 	QTimer*		m_timer;
 	quint16		m_fromID;
 	bool		m_isTyping;
 	quint16		m_typingId;
+	QString		m_fileName;
+	QFile*		m_sendFile;
 
 public slots:
 	/*!
@@ -63,6 +67,7 @@ public slots:
 	Q_INVOKABLE void slotIsTyping(quint16 toID, bool isTexting);
 	//! Слот инициализации Client
 	Q_INVOKABLE void start();
+	Q_INVOKABLE void socketSendFile(quint16 toID, QString path);
 
 private slots:
 	//! Слот готовности чтения сообщения от сервера
@@ -74,6 +79,7 @@ private slots:
 	//! Слот Timeout таймера для повторного подключения к серверу
 	void slotTimeout();
 //	void slotError(QAbstractSocket::SocketError);
+	void sendPartOfFile();
 
 signals:
 	void isConnected(bool);
